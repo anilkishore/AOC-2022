@@ -10,10 +10,12 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.asSequence().chunked(3).map {
-            val ch = it.map { s -> s.toSet() }.reduce { a, b -> a.intersect(b)}.first()
-            if (ch in 'a'..'z') (ch - 'a' + 1) else 26 + (ch - 'A' + 1)
-        }.sum()
+        return input.asSequence()
+            .chunked(3)
+            .map {
+                val ch = it.map { s -> s.toSet() }.reduce { a, b -> a.intersect(b)}.first()
+                if (ch in 'a'..'z') (ch - 'a' + 1) else 26 + (ch - 'A' + 1)
+            }.sum()
     }
 
     val input = readInput("Day03")
