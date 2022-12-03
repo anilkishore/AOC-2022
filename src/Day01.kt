@@ -1,17 +1,22 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    val elfs = mutableListOf<Int>()
+    var str: String? = readlnOrNull()?.trim()
+    var cur = 0
+    while(str != null) {
+        if (str.isEmpty()) {
+            elfs.add(cur)
+            cur = 0
+        } else {
+            cur += str.toInt()
+        }
+        str = readlnOrNull()?.trim()
     }
+    elfs.add(cur)
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
+    elfs.sortDescending()
+    var ans = 0
+    for (i in 0..2)
+        ans += elfs[i]
 
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
-
-    val input = readInput("Day01")
-    println(part1(input))
-    println(part2(input))
+    println(ans)
 }
