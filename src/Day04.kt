@@ -15,7 +15,18 @@ fun main() {
         }
     }
 
+    fun part2(input: List<String>): Int {
+
+        return input.sumOf {
+            val ranges = it.split(",").map { s ->
+                val ss = s.split("-")
+                IntRange(ss[0].toInt(), ss[1].toInt())
+            }
+            (if (ranges[0].intersect(ranges[1]).isNotEmpty()) 1 else 0).toInt()
+        }
+    }
+
     val input = readInput("Day04")
     println(part1(input))
-//    println(part2(input))
+    println(part2(input))
 }
