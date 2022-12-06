@@ -20,7 +20,6 @@ fun main() {
         val numPattern = Pattern.compile("\\d+")
         moves.forEach {
             val matcher = numPattern.matcher(it)
-            matcher.results()
             val (cnt, from, to) = matcher.results().mapToInt { r -> r.group().toInt() }.toList()
             var fromStk = stacks[from]
 
