@@ -1,9 +1,8 @@
 fun main() {
 
     fun solve(str: String, lim: Int): Int {
-        val arr = str.toCharArray()
         for (i in lim..str.length)
-            if (hashSetOf(*arr.copyOfRange(i - lim, i).toTypedArray()).size == lim)
+            if (str.subSequence(i-lim, i).toSet().size == lim)
                 return i
         return -1
     }
