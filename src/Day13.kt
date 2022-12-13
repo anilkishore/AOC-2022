@@ -1,5 +1,3 @@
-import java.util.*
-
 fun main() {
 
     fun endIndex(str: String, s: Int): Int {
@@ -21,33 +19,33 @@ fun main() {
         return i
     }
 
-    fun compare(str1: String, s1: Int, e1: Int, str2: String, s2: Int, e2: Int, sp: Int = 0): Int {
+    fun compare(str1: String, s1: Int, e1: Int, str2: String, s2: Int, e2: Int): Int {
         if (s1 >= e1) return if (s2 >= e2) 0 else -1
         if (s2 >= e2) return 1
         if (str1[s1] == ',') return compare(str1, s1 + 1, e1, str2, s2, e2)
         if (str2[s2] == ',') return compare(str1, s1, e1, str2, s2 + 1, e2)
-        val ss1: Int
-        val ss2: Int
+        val mid1: Int
+        val mid2: Int
         val res: Int
         if (str1[s1] == '[') {
-            ss1 = endIndex(str1, s1)
+            mid1 = endIndex(str1, s1)
             res = if (str2[s2] == '[') {
-                ss2 = endIndex(str2, s2)
-                compare(str1, s1 + 1, ss1, str2, s2 + 1, ss2, sp + 4)
+                mid2 = endIndex(str2, s2)
+                compare(str1, s1 + 1, mid1, str2, s2 + 1, mid2)
             } else {
-                ss2 = numIndex(str2, s2, e2)
-                compare(str1, s1 + 1, ss1, str2, s2, ss2, sp + 4)
+                mid2 = numIndex(str2, s2, e2)
+                compare(str1, s1 + 1, mid1, str2, s2, mid2)
             }
         } else if (str2[s2] == '[') {
-            ss1 = numIndex(str1, s1, e1)
-            ss2 = endIndex(str2, s2)
-            res = compare(str1, s1, ss1, str2, s2 + 1, ss2, sp + 4)
+            mid1 = numIndex(str1, s1, e1)
+            mid2 = endIndex(str2, s2)
+            res = compare(str1, s1, mid1, str2, s2 + 1, mid2)
         } else {
-            ss1 = numIndex(str1, s1, e1)
-            ss2 = numIndex(str2, s2, e2)
-            res = str1.substring(s1, ss1).toInt().compareTo(str2.substring(s2, ss2).toInt())
+            mid1 = numIndex(str1, s1, e1)
+            mid2 = numIndex(str2, s2, e2)
+            res = str1.substring(s1, mid1).toInt().compareTo(str2.substring(s2, mid2).toInt())
         }
-        return if (res != 0) res else compare(str1, ss1 + 1, e1, str2, ss2 + 1, e2, sp + 4)
+        return if (res != 0) res else compare(str1, mid1 + 1, e1, str2, mid2 + 1, e2)
     }
 
     fun compare(str1: String, str2: String): Int {
