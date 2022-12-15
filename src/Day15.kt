@@ -1,6 +1,8 @@
 import java.util.regex.Pattern
 import kotlin.math.abs
 import kotlin.streams.toList
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class Segment(var start: Int, var end: Int) : Comparable<Segment> {
 
@@ -17,6 +19,7 @@ class Segment(var start: Int, var end: Int) : Comparable<Segment> {
         else end - other.end
 }
 
+@OptIn(ExperimentalTime::class)
 fun main() {
 
     val lim = 4000000
@@ -66,5 +69,5 @@ fun main() {
         matcher.results().mapToInt { r -> r.group().toInt() }.toList()
     }
     println(part1(numsList))
-    println(part2(numsList))
+    println("Runtime (ms) = ${measureTime { part2(numsList) }.inWholeMilliseconds}") // 1.5-1.7s
 }
