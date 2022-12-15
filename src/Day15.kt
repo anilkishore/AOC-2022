@@ -4,7 +4,14 @@ import kotlin.streams.toList
 
 class Segment(var start: Int, var end: Int) : Comparable<Segment> {
 
-    override fun toString() = "[$start, $end]"
+    fun overlap(other: Segment): Int {
+        if (other.end < other.start)
+            return 0
+        val maxStart = maxOf(start, other.start)
+        val minEnd = minOf(end, other.end)
+        return maxOf(0, minEnd - maxStart + 1)
+    }
+
     override fun compareTo(other: Segment): Int =
         if (start != other.start) start - other.start
         else end - other.end
@@ -12,16 +19,14 @@ class Segment(var start: Int, var end: Int) : Comparable<Segment> {
 
 fun main() {
 
-    val Y_LIMIT = 2000000
+    val lim = 4000000
 
-    fun part1(input: List<String>): Int {
+    fun part1(input: List<List<Int>>, yLimit: Int = 2000000): Int {
         val beaconXs = mutableSetOf<Int>()
-        val numPattern = Pattern.compile("-?\\d+")
         val segments = input.map { s ->
-            val matcher = numPattern.matcher(s)
-            val (sx, sy, bx, by) = matcher.results().mapToInt { r -> r.group().toInt() }.toList()
-            if (by == Y_LIMIT) beaconXs.add(bx)
-            val dx = abs(sx - bx) + abs(sy - by) - abs(sy - Y_LIMIT)
+            val (sx, sy, bx, by) = s
+            if (by == yLimit) beaconXs.add(bx)
+            val dx = abs(sx - bx) + abs(sy - by) - abs(sy - yLimit)
             if (dx < 0) Segment(0, -1)
             else Segment(sx - dx, sx + dx)
         }.filter { it.start <= it.end }.toTypedArray()
@@ -37,11 +42,29 @@ fun main() {
                 merged.add(s)
         }
 
-//        println(merged.joinToString())
+        // Part-2
+        val xLimit = Segment(0, lim)
+        for (i in 0 until merged.size - 1) {
+            val gap = Segment(merged[i].end + 1, merged[i + 1].start - 1)
+            if (gap.overlap(xLimit) == 1) {
+                println("Part 2 answer = ${gap.start.toLong() * lim + yLimit}")
+            }
+        }
 
         return merged.sumOf { it.end - it.start + 1 } - beaconXs.size
     }
 
+    fun part2(input: List<List<Int>>) {
+        for (y in 0..lim)
+            part1(input, y)
+    }
+
     val input = readInput("Day15")
-    println(part1(input))
+    val numPattern = Pattern.compile("-?\\d+")
+    val numsList = input.map { s ->
+        val matcher = numPattern.matcher(s)
+        matcher.results().mapToInt { r -> r.group().toInt() }.toList()
+    }
+    println(part1(numsList))
+    println(part2(numsList))
 }
