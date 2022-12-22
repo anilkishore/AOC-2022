@@ -1,6 +1,6 @@
 import java.lang.Exception
 
-sealed class Operation {
+sealed class Operation() {
     abstract fun run(a: Long, b: Long): Long
     abstract fun getA(b: Long, result: Long): Long
     abstract fun getB(a: Long, result: Long): Long
@@ -41,14 +41,17 @@ class Result(val value: Long, val isAlongHumn: Boolean)
 val params = mutableMapOf<String, Variable>()
 val resultsMap = mutableMapOf<String, Result>()
 private const val HUMN = "humn"
+
+// -----------------------------------------------------------------------------
+
 fun findValue(str: String): Long = (params[str] ?: error("!!")).getValue()
 
-fun fillValuePairs(str: String): Result {
+fun fillResults(str: String): Result {
     val res = when (val variable = params[str] ?: error("Unknown param $str")) {
         is NumberVariable -> Result(variable.getValue(), str == HUMN)
         is OperationVariable -> {
-            val aRes = fillValuePairs(variable.a)
-            val bRes = fillValuePairs(variable.b)
+            val aRes = fillResults(variable.a)
+            val bRes = fillResults(variable.b)
             Result(variable.op.run(aRes.value, bRes.value), aRes.isAlongHumn or bRes.isAlongHumn)
         }
     }
@@ -56,7 +59,7 @@ fun fillValuePairs(str: String): Result {
     return res
 }
 
-fun trickle(str: String, expValue: Long) {
+fun trickleDown(str: String, expValue: Long) {
     if (str == HUMN) {
         println("Part 2 ans: $expValue")
         return
@@ -66,10 +69,10 @@ fun trickle(str: String, expValue: Long) {
     val resB = resultsMap[variable.b] ?: error("")
     if (resA.isAlongHumn) { // ? op b = exp
         val aVal = variable.op.getA(resB.value, expValue)
-        trickle(variable.a, aVal)
+        trickleDown(variable.a, aVal)
     } else { // a op ? = exp
         val bVal = variable.op.getB(resA.value, expValue)
-        trickle(variable.b, bVal)
+        trickleDown(variable.b, bVal)
     }
 }
 
@@ -100,11 +103,11 @@ fun main() {
 
     fun part2() {
         val root = params["root"] as? OperationVariable ?: error("No root")
-        fillValuePairs("root")
+        fillResults("root")
         if (resultsMap[root.a]!!.isAlongHumn)
-            trickle(root.a, resultsMap[root.b]!!.value)
+            trickleDown(root.a, resultsMap[root.b]!!.value)
         else
-            trickle(root.b, resultsMap[root.a]!!.value)
+            trickleDown(root.b, resultsMap[root.a]!!.value)
     }
 
     val input = readInput("Day21")
